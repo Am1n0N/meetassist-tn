@@ -106,6 +106,9 @@ def should_analyze(state: MeetingAgentState) -> str:
     messages = state.get("messages", [])
     if not messages:
         return "chat"
+    # Don't re-analyze if we already have results from a previous run
+    if state.get("action_items") or state.get("decisions"):
+        return "chat"
     last_msg = messages[-1]
     content = getattr(last_msg, "content", "")
     if isinstance(content, str) and ("analyze" in content.lower() or "transcript" in content.lower()):

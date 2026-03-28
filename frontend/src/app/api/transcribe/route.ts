@@ -18,11 +18,11 @@ export async function POST(req: NextRequest) {
       response_format: 'verbose_json',
     });
 
-    // Map Whisper language codes to our internal codes
+    // Map Whisper ISO 639-1 language codes to our internal codes
     const rawLang = (transcription as { language?: string }).language ?? '';
     let language: 'ar' | 'fr' | 'mixed' = 'mixed';
-    if (rawLang === 'french') language = 'fr';
-    else if (rawLang === 'arabic') language = 'ar';
+    if (rawLang === 'fr' || rawLang === 'french') language = 'fr';
+    else if (rawLang === 'ar' || rawLang === 'arabic') language = 'ar';
 
     return NextResponse.json({
       text: transcription.text,

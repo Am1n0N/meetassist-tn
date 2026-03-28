@@ -32,7 +32,7 @@ export default function SentimentTimeline({ segments = [], scores }: SentimentTi
         <CardContent>
           <div className="flex items-end gap-1 h-24">
             {scores.map((s, i) => {
-              const height = Math.max(10, ((s.score + 1) / 2) * 100);
+              const height = Math.min(100, Math.max(10, ((s.score + 1) / 2) * 100));
               return (
                 <div
                   key={i}
