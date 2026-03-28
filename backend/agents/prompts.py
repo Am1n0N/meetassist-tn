@@ -46,24 +46,27 @@ When analyzing meeting content:
 
 EXTRACT_ACTIONS_PROMPT = """Extract action items from the following meeting transcript.
 For each action item, identify:
+- id: a unique short id (e.g. "a1", "a2")
 - title: clear, actionable task description
-- assignee: person responsible (if mentioned)
-- deadline: due date (if mentioned)
+- assignee: person responsible (if mentioned, otherwise null)
+- deadline: due date (if mentioned, otherwise null)
 - priority: high/medium/low based on context
 - status: always 'todo' for new items
 
-Return as a JSON array.
+Return ONLY a valid JSON array with no extra text or markdown.
 
 Transcript:
 {transcript}"""
 
 EXTRACT_DECISIONS_PROMPT = """Extract key decisions made in the following meeting transcript.
 For each decision, identify:
+- id: a unique short id (e.g. "d1", "d2")
 - text: the decision made
 - context: why this decision was made
-- participants: who was involved in making this decision
+- timestamp: 0 (use 0 if not determinable)
+- participants: list of names who were involved (empty list if not determinable)
 
-Return as a JSON array.
+Return ONLY a valid JSON array with no extra text or markdown.
 
 Transcript:
 {transcript}"""
@@ -76,17 +79,34 @@ The summary should:
 4. Be professional and suitable for sharing with stakeholders
 
 The meeting may be in Tunisian Derija, French, or a mix of both.
+Respond in English.
 
 Transcript:
 {transcript}"""
 
 GENERATE_EMAIL_PROMPT = """Generate a professional follow-up email in French for this meeting.
 The email should include:
-- Brief meeting recap
-- List of decisions made
-- Action items with owners and deadlines
-- Next steps
+- Subject line (Objet:)
+- Brief meeting recap (Récapitulatif)
+- List of decisions made (Décisions)
+- Action items with owners and deadlines (Points d'action)
+- Next steps / closing (Prochaines étapes)
 
 Meeting Summary: {summary}
 Action Items: {action_items}
-Decisions: {decisions}"""
+Decisions: {decisions}
+
+Return only the email text, no extra commentary."""
+
+EXTRACT_SENTIMENT_PROMPT = """Analyze the sentiment arc of this meeting transcript.
+Divide the meeting into roughly 5-8 time segments and assess the sentiment for each.
+
+For each segment return:
+- label: short description of the segment topic (max 6 words)
+- sentiment: positive / neutral / negative
+- score: a float between -1.0 (very negative) and 1.0 (very positive)
+
+Return ONLY a valid JSON array with no extra text or markdown.
+
+Transcript:
+{transcript}"""

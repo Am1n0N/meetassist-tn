@@ -7,7 +7,18 @@ import MeetingWorkspace from '@/components/meeting/MeetingWorkspace';
 function MeetingPageContent({ params }: { params: { id: string } }) {
   const searchParams = useSearchParams();
   const title = searchParams.get('title') || 'Meeting';
-  return <MeetingWorkspace meetingId={params.id} meetingTitle={title} />;
+  const participantsParam = searchParams.get('participants') || '';
+  const participants = participantsParam
+    ? participantsParam.split(',').map((p) => p.trim()).filter(Boolean)
+    : [];
+
+  return (
+    <MeetingWorkspace
+      meetingId={params.id}
+      meetingTitle={title}
+      initialParticipants={participants}
+    />
+  );
 }
 
 export default function MeetingPage({ params }: { params: { id: string } }) {

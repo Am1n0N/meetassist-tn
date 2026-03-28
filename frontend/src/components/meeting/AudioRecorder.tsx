@@ -84,13 +84,13 @@ export default function AudioRecorder({ isRecording, onTranscriptUpdate }: Audio
       formData.append('audio', blob, 'recording.webm');
       const response = await fetch('/api/transcribe', { method: 'POST', body: formData });
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.json() as { text: string; language: 'ar' | 'fr' | 'mixed' };
         onTranscriptUpdate({
           id: Date.now().toString(),
           speaker: 'Speaker',
           text: data.text,
           timestamp: Date.now(),
-          language: 'mixed',
+          language: data.language ?? 'mixed',
         });
       }
     } catch (err) {
