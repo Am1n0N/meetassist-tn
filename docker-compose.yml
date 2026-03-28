@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_COPILOTKIT_URL=http://backend:8000/copilotkit
+    depends_on:
+      - backend
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
