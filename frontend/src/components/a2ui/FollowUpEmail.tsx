@@ -9,15 +9,17 @@ interface FollowUpEmailProps {
   to?: string[];
   subject?: string;
   body?: string;
+  /** Full email text returned directly from the AI (overrides to/subject/body). */
+  content?: string;
 }
 
-export default function FollowUpEmail({ to = [], subject = '', body = '' }: FollowUpEmailProps) {
+export default function FollowUpEmail({ to = [], subject = '', body = '', content }: FollowUpEmailProps) {
   const [copied, setCopied] = useState(false);
 
-  const emailContent = `To: ${to.join(', ')}\nSubject: ${subject}\n\n${body}`;
+  const displayText = content ?? `To: ${to.join(', ')}\nSubject: ${subject}\n\n${body}`;
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(emailContent);
+    await navigator.clipboard.writeText(displayText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -31,10 +33,16 @@ export default function FollowUpEmail({ to = [], subject = '', body = '' }: Foll
       </CardHeader>
       <CardContent>
         <div className="bg-gray-50 rounded-lg p-4 font-mono text-sm space-y-2">
-          <div><span className="font-bold text-muted-foreground">To:</span> {to.join(', ') || '(recipients)'}</div>
-          <div><span className="font-bold text-muted-foreground">Subject:</span> {subject || '(subject)'}</div>
-          <hr className="border-gray-200" />
-          <pre className="whitespace-pre-wrap text-xs">{body || '(email body will appear here after AI generation)'}</pre>
+          {content ? (
+            <pre className="whitespace-pre-wrap text-xs">{content}</pre>
+          ) : (
+            <>
+              <div><span className="font-bold text-muted-foreground">To:</span> {to.join(', ') || '(recipients)'}</div>
+              <div><span className="font-bold text-muted-foreground">Subject:</span> {subject || '(subject)'}</div>
+              <hr className="border-gray-200" />
+              <pre className="whitespace-pre-wrap text-xs">{body || '(email body will appear here after AI generation)'}</pre>
+            </>
+          )}
         </div>
         <Button variant="outline" size="sm" className="mt-3 gap-2" onClick={handleCopy}>
           {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}

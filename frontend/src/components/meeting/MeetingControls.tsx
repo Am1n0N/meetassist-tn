@@ -3,15 +3,24 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Mic, Square, Download, Sparkles } from 'lucide-react';
+import { Mic, Square, Download, Sparkles, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface MeetingControlsProps {
   isRecording: boolean;
+  isAnalyzing?: boolean;
   onToggleRecording: () => void;
+  onGenerateSummary?: () => void;
+  onExportTranscript?: () => void;
 }
 
-export default function MeetingControls({ isRecording, onToggleRecording }: MeetingControlsProps) {
+export default function MeetingControls({
+  isRecording,
+  isAnalyzing = false,
+  onToggleRecording,
+  onGenerateSummary,
+  onExportTranscript,
+}: MeetingControlsProps) {
   return (
     <Card>
       <CardHeader>
@@ -30,10 +39,25 @@ export default function MeetingControls({ isRecording, onToggleRecording }: Meet
           )}
         </Button>
         <Separator />
-        <Button variant="outline" className="w-full gap-2" size="sm">
-          <Sparkles className="w-4 h-4" /> Generate Summary
+        <Button
+          variant="outline"
+          className="w-full gap-2"
+          size="sm"
+          onClick={onGenerateSummary}
+          disabled={isAnalyzing}
+        >
+          {isAnalyzing ? (
+            <><Loader2 className="w-4 h-4 animate-spin" /> Analyzing…</>
+          ) : (
+            <><Sparkles className="w-4 h-4" /> Generate Summary</>
+          )}
         </Button>
-        <Button variant="outline" className="w-full gap-2" size="sm">
+        <Button
+          variant="outline"
+          className="w-full gap-2"
+          size="sm"
+          onClick={onExportTranscript}
+        >
           <Download className="w-4 h-4" /> Export Transcript
         </Button>
         <Link href="/dashboard" className="block">
